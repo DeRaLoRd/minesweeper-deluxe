@@ -1,0 +1,119 @@
+﻿<Page x:Class="kursach.GamePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:kursach"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="800"
+      Title="GamePage" Loaded="Page_Loaded">
+
+    
+
+    <Grid Background="#202020">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.08*"/>
+            <RowDefinition Height="0.08*"/>
+            <RowDefinition Height="0.08*"/>
+            <RowDefinition Height="0.6*"/>
+            <RowDefinition Height="0.08*"/>
+            <RowDefinition Height="0.08*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.125*"/>
+            <ColumnDefinition Width="0.25*"/>
+            <ColumnDefinition Width="0.25*"/>
+            <ColumnDefinition Width="0.25*"/>
+            <ColumnDefinition Width="0.125*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="1"
+                   FontFamily="Courier New Bold"
+                   FontSize="50"
+                   Foreground="#4e05ad"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center">
+            Мины
+        </TextBlock>
+
+        <TextBlock Grid.Row="0" Grid.Column="3"
+                   FontFamily="Courier New Bold"
+                   FontSize="50"
+                   Foreground="#4e05ad"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center">
+            Время
+        </TextBlock>
+
+        <Border Grid.Row="1" Grid.Column="1"
+                BorderBrush="#101010" BorderThickness="1" CornerRadius="20"
+                Background="#101010">
+            <Label x:Name="MineLabel" 
+                   HorizontalContentAlignment="Center"
+                   VerticalContentAlignment="Center"
+                   FontFamily="Courier New Bold"
+                   FontSize="38"
+                   Foreground="#4e05ad">
+
+            </Label>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="3"
+                BorderBrush="#101010" BorderThickness="1" CornerRadius="20"
+                Background="#101010">
+            <Label x:Name="TimeLabel" 
+                   HorizontalContentAlignment="Center"
+                   VerticalContentAlignment="Center"
+                   FontFamily="Courier New Bold"
+                   FontSize="38"
+                   Foreground="#4e05ad">
+                
+            </Label>
+        </Border>
+
+        <Border Grid.Row="3" Grid.Column="0" 
+                Grid.RowSpan="3" Grid.ColumnSpan="5"
+                BorderBrush="#101010" BorderThickness="1" CornerRadius="70 70 0 0"
+                Background="#101010">
+        </Border>
+
+        <WrapPanel Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3"
+                   x:Name="GameField"
+                   ItemHeight="25" ItemWidth="25"
+                   HorizontalAlignment="Center" VerticalAlignment="Center">
+        </WrapPanel>
+
+        <Button Grid.Row="5" Grid.Column="1"
+                IsCancel="True" Click="Back_Button_Click"
+                Background="#101010" BorderBrush="#101010">
+            <Label 
+                   FontFamily="Courier New Bold"
+                   FontSize="27"
+                   Foreground="#4e05ad"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center">
+                ESC - Выход
+            </Label>
+        </Button>
+
+
+        <TextBlock Grid.Row="4" Grid.Column="3" Grid.ColumnSpan="2"
+                   FontFamily="Courier New Bold"
+                   FontSize="28"
+                   Foreground="#4e05ad"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom">
+            ЛКМ - Открыть
+        </TextBlock>
+
+        <TextBlock Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="2"
+                   FontFamily="Courier New Bold"
+                   FontSize="28"
+                   Foreground="#4e05ad"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center">
+            ПКМ - Флажок
+        </TextBlock>
+
+    </Grid>
+</Page>
