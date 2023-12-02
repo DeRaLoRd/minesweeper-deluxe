@@ -41,7 +41,8 @@ namespace kursach
         public int Difficulty { get; set; }  // Сложность переданная из MenuPage
         public int MineAmount { get; set; }  // Количество непомеченных мин на поле
         TimePassed timePassed;               // Время решения уровня
-        DispatcherTimer timer = null;        // Для реализации секундомера
+        DispatcherTimer timer = null;       // Для реализации секундомера
+        internal List<Tile> tileList = null;  // Список мин
 
         public GamePage(MenuPage menu, int diff)
         {
@@ -109,6 +110,11 @@ namespace kursach
             }
         }
 
+        /// <summary>
+        /// Выставляет значения клеточкам
+        /// </summary>
+        /// <param name="field">Ссылка на поле</param>
+        /// <param name="difficulty">Сложность</param>
         private void SetAroundCounts(List<Tile> field, int difficulty)
         {
             int rows = difficulty == 20 ? 12 : difficulty;
@@ -186,13 +192,141 @@ namespace kursach
             field[difficulty * rows - 1].TileUpdate();
         }
 
+        internal void OpenAround(Tile tile)
+        {
+            int i = 0;
+            while (tileList[i] != tile)
+                i++;
+
+            OpenAround(tile, i);
+        }
+
+        internal void OpenAround(Tile tile, int cur/*, int prev*/)
+        {
+            int rows = Difficulty == 20 ? 12 : Difficulty;
+
+            tile.tileStatus = TileStatus.Open;
+            tile.TileUpdate();
+
+            // Базис рекурсии
+            if (tile.AroundCount != 0) return;
+
+            if (cur == 0)
+            {
+                if (tileList[1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[1], 1);
+                if (tileList[Difficulty].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[Difficulty], Difficulty);
+                if (tileList[Difficulty + 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[Difficulty + 1], Difficulty + 1);
+            }
+            else if (cur < Difficulty - 1)
+            {
+                if (tileList[cur - 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - 1], cur - 1);
+                if (tileList[cur + 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur + 1], cur + 1);
+                if (tileList[cur - 1 + Difficulty].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - 1 + Difficulty], cur - 1 + Difficulty);
+                if (tileList[cur + Difficulty].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur + Difficulty], cur + Difficulty);
+                if (tileList[cur + 1 + Difficulty].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur + 1 + Difficulty], cur + 1 + Difficulty);
+            }
+            else if (cur == Difficulty - 1)
+            {
+                if (tileList[cur - 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - 1], cur - 1);
+                if (tileList[cur + Difficulty - 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur + Difficulty - 1], cur + Difficulty - 1);
+                if (tileList[cur + Difficulty].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur + Difficulty], cur + Difficulty);
+            }
+            else if ((cur % Difficulty == 0) && (cur != Difficulty * (rows - 1)))
+            {
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - Difficulty], cur - Difficulty);
+                if (tileList[cur - Difficulty + 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - Difficulty + 1], cur - Difficulty + 1);
+                if (tileList[cur + 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur + 1], cur + 1);
+                if (tileList[cur + Difficulty].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur + Difficulty], cur + Difficulty);
+                if (tileList[cur + Difficulty + 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur + Difficulty + 1], cur + Difficulty + 1);
+            }
+            else if ((cur + 1) % Difficulty == 0 && cur != (Difficulty * rows - 1))
+            {
+                if (tileList[cur - Difficulty - 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - Difficulty - 1], cur - Difficulty - 1);
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - Difficulty], cur - Difficulty);
+                if (tileList[cur - 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - 1], cur - 1);
+                if (tileList[cur + Difficulty - 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur + Difficulty - 1], cur + Difficulty - 1);
+                if (tileList[cur + Difficulty].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur + Difficulty], cur + Difficulty);
+            }
+            else if (cur == Difficulty * (rows - 1))
+            {
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - Difficulty], cur - Difficulty);
+                if (tileList[cur - Difficulty + 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - Difficulty + 1], cur - Difficulty + 1);
+                if (tileList[cur + 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur+ 1], Difficulty + 1);
+            }
+            else if (cur > Difficulty * (rows - 1) && cur < Difficulty * rows - 1)
+            {
+                if (tileList[cur - Difficulty - 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - Difficulty - 1], cur - Difficulty - 1);
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - Difficulty], cur - Difficulty);
+                if (tileList[cur - Difficulty + 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - Difficulty + 1], cur - Difficulty + 1);
+                if (tileList[cur - 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - 1], cur - 1);
+                if (tileList[cur + 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur + 1], cur + 1);
+            }
+            else if (cur == Difficulty * rows - 1)
+            {
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - Difficulty], cur - Difficulty);
+                if (tileList[cur - Difficulty - 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - Difficulty - 1], cur - Difficulty - 1);
+                if (tileList[cur - 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - 1], cur - 1);
+            }
+            else
+            {
+                if (tileList[cur - Difficulty - 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - Difficulty - 1], cur - Difficulty - 1);
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - Difficulty], cur - Difficulty);
+                if (tileList[cur - Difficulty + 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - Difficulty + 1], cur - Difficulty + 1);
+                if (tileList[cur - 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - 1], cur - 1);
+                if (tileList[cur + 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur + 1], cur + 1);
+                if (tileList[cur + Difficulty - 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur + Difficulty - 1], cur + Difficulty - 1);
+                if (tileList[cur + Difficulty].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur + Difficulty], cur + Difficulty);
+                if (tileList[cur + Difficulty + 1].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur + Difficulty + 1], cur + Difficulty + 1);
+            }
+        }
+
         // Генерация игрового поля
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             timer.Start();
 
             int tileAmount = Difficulty == 9 ? 81 : Difficulty == 12 ? 144 : 240;
-            List<Tile> tileList = new List<Tile>();
+            tileList = new List<Tile>();
             for (int i = 0; i < tileAmount; i++)
             {
                 Tile temp = new Tile(this);

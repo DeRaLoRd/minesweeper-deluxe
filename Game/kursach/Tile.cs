@@ -35,7 +35,7 @@ namespace kursach
         public Button TileButton { get; set; }  // Кнопка вокруг которой построен класс
         public bool Planted { get; set; }       // Заложена ли мина
         public int AroundCount { get; set; }    // Сколько мин вокруг клетки
-        private TileStatus tileStatus;          // Состояние конкретной плитки
+        public TileStatus tileStatus;          // Состояние конкретной плитки
 
         public Tile(GamePage gamePage)
         {
@@ -62,7 +62,6 @@ namespace kursach
             Color buttonBorder = new Color();
 
             buttonBackground.A = 255;
-
             switch (status)
             {
                 case TileStatus.Closed:
@@ -78,16 +77,42 @@ namespace kursach
                     break;
 
                 case TileStatus.Open:
-                    buttonBackground.R = 255;
-                    buttonBackground.G = 255;
-                    buttonBackground.B = 255;
+                    buttonBackground.R = 16;
+                    buttonBackground.G = 16;
+                    buttonBackground.B = 16;
                     break;
             }
 
             buttonForeground.A = 255;
-            buttonForeground.R = 0;
-            buttonForeground.G = 0;
-            buttonForeground.B = 0;
+            switch (status)
+            {
+                case TileStatus.Closed:
+                    buttonForeground.R = 0;
+                    buttonForeground.G = 0;
+                    buttonForeground.B = 0;
+                    break;
+
+                case TileStatus.Marked:
+                    buttonForeground.R = 0;
+                    buttonForeground.G = 0;
+                    buttonForeground.B = 0;
+                    break;
+
+                case TileStatus.Open:
+                    if (!Planted)
+                    {
+                        buttonForeground.R = 255;
+                        buttonForeground.G = 255;
+                        buttonForeground.B = 255;
+                    }
+                    else
+                    {
+                        buttonForeground.R = 255;
+                        buttonForeground.G = 0;
+                        buttonForeground.B = 0;
+                    }
+                    break;
+            }
 
             buttonBorder.A = 255;
             buttonBorder.R = 16;
@@ -100,41 +125,19 @@ namespace kursach
             tileStyle.Setters.Add(new Setter { Property = Button.ForegroundProperty, Value = new SolidColorBrush(buttonForeground) });
             tileStyle.Setters.Add(new Setter { Property = Button.BorderThicknessProperty, Value = new Thickness(1) });
             tileStyle.Setters.Add(new Setter { Property = Button.HorizontalContentAlignmentProperty, Value = HorizontalAlignment.Center });
+            tileStyle.Setters.Add(new Setter { Property = Button.VerticalContentAlignmentProperty, Value = VerticalAlignment.Center });
             tileStyle.Setters.Add(new Setter { Property = Button.FontFamilyProperty, Value = new FontFamily("Courier New Bold") });
+            tileStyle.Setters.Add(new Setter { Property = Button.FontSizeProperty, Value = 23.0 });
 
             return tileStyle;
         }
-
-        ///// <summary>
-        ///// Инициализирует цвета для создания стиля плиток
-        ///// </summary>
-        ///// <param name="back">Цвет плитки</param>
-        ///// <param name="front">Цвет текста</param>
-        ///// <param name="border">Цвет границ</param>
-        //private void GetColors(ref Color back, ref Color front, ref Color border)
-        //{
-        //    back.A = 255;
-        //    back.R = 78;
-        //    back.G = 5;
-        //    back.B = 173;
-
-        //    front.A = 255;
-        //    front.R = 0;
-        //    front.G = 0;
-        //    front.B = 0;
-
-        //    border.A = 255;
-        //    border.R = 16;
-        //    border.G = 16;
-        //    border.B = 16;
-        //}
 
         public void TileUpdate()
         {
             switch (tileStatus)
             {
                 case TileStatus.Open:
-                    TileButton.Content = Planted ? "хуй" : AroundCount.ToString();
+                    TileButton.Content = Planted ? "*" : AroundCount.ToString();
                     break;
 
                 case TileStatus.Closed:
@@ -142,7 +145,7 @@ namespace kursach
                     break;
 
                 case TileStatus.Marked:
-                    TileButton.Content = "!!!";
+                    TileButton.Content = "!";
                     break;
             }
             TileButton.Style = GetStyle(tileStatus);
@@ -155,6 +158,10 @@ namespace kursach
             tileStatus = TileStatus.Open;
             TileUpdate();
             // сюда условие мол не заминировано ли
+            if (AroundCount == 0 && !Planted)
+            {
+                gamePage.OpenAround(this);
+            }
         }
 
         public void TileMarked(object sender, RoutedEventArgs e)
