@@ -42,6 +42,7 @@ namespace kursach
             this.gamePage = gamePage;
             TileButton = new Button();
             TileButton.Click += TileOpen;
+            TileButton.Click += gamePage.CheckWin;
             TileButton.MouseRightButtonDown += TileMarked;
             tileStatus = TileStatus.Closed;                 // Изначальное состояние плиток
             AroundCount = 0;
@@ -129,6 +130,10 @@ namespace kursach
             tileStyle.Setters.Add(new Setter { Property = Button.FontFamilyProperty, Value = new FontFamily("Courier New Bold") });
             tileStyle.Setters.Add(new Setter { Property = Button.FontSizeProperty, Value = 23.0 });
 
+            Trigger temp = new Trigger { Property = Button.IsMouseOverProperty, Value = true };
+            temp.Setters.Add(new Setter { Property = Button.ForegroundProperty, Value = new SolidColorBrush(Colors.Black) });
+            tileStyle.Triggers.Add(temp);
+
             return tileStyle;
         }
 
@@ -137,7 +142,8 @@ namespace kursach
             switch (tileStatus)
             {
                 case TileStatus.Open:
-                    TileButton.Content = Planted ? "*" : AroundCount.ToString();
+                    TileButton.Content = Planted ? "*" : 
+                                       AroundCount == 0 ? "" : AroundCount.ToString();
                     break;
 
                 case TileStatus.Closed:
@@ -153,14 +159,26 @@ namespace kursach
 
         public void TileOpen(object sender, RoutedEventArgs e)
         {
-            if (tileStatus != TileStatus.Closed)
-                return;
-            tileStatus = TileStatus.Open;
-            TileUpdate();
-            // сюда условие мол не заминировано ли
-            if (AroundCount == 0 && !Planted)
+            if (tileStatus == TileStatus.Open && AroundCount != 0)
             {
-                gamePage.OpenAround(this);
+                gamePage.DoAccord(this);
+            }
+
+            else if (tileStatus == TileStatus.Closed)
+            {
+                tileStatus = TileStatus.Open;
+                TileUpdate();
+
+                if (Planted)
+                {
+                    TileButton.Click -= gamePage.CheckWin;
+                    gamePage.DisplayLose();
+                }
+
+                if (AroundCount == 0 && !Planted)
+                {
+                    gamePage.OpenAround(this);
+                }
             }
         }
 

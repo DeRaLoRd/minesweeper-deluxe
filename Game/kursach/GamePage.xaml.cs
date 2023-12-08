@@ -40,6 +40,7 @@ namespace kursach
         MenuPage menuPage = null;            // Ссылка на страницу с главным меню для навигации назад
         public int Difficulty { get; set; }  // Сложность переданная из MenuPage
         public int MineAmount { get; set; }  // Количество непомеченных мин на поле
+        private int mineOverallAmount = 0;      // Количество мин в принципе
         TimePassed timePassed;               // Время решения уровня
         DispatcherTimer timer = null;       // Для реализации секундомера
         internal List<Tile> tileList = null;  // Список мин
@@ -104,6 +105,7 @@ namespace kursach
                     difficulty == 20 && chance <= 0.25)
                 {
                     MineAmount++;
+                    mineOverallAmount++;
                     item.Planted = true;
                     item.TileUpdate();
                 }
@@ -209,7 +211,7 @@ namespace kursach
             tile.TileUpdate();
 
             // Базис рекурсии
-            if (tile.AroundCount != 0) return;
+            if (tile.AroundCount != 0 || tile.Planted) return;
 
             if (cur == 0)
             {
@@ -320,6 +322,258 @@ namespace kursach
             }
         }
 
+        internal void DoAccord(Tile tile)
+        {
+            int cur = 0;
+            while (tileList[cur] != tile)
+                cur++;
+
+            int rows = Difficulty == 20 ? 12 : Difficulty;
+            int markedAmount = 0;
+
+            List<Tile> list = new List<Tile>();
+
+            if (cur == 0)
+            {
+                if (tileList[cur + 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + Difficulty].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + Difficulty + 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+
+                if (markedAmount != tile.AroundCount)
+                    return;
+
+                if (tileList[cur + 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + 1]);
+                if (tileList[cur + Difficulty].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + Difficulty]);
+                if (tileList[cur + Difficulty + 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + Difficulty + 1]);
+            }
+
+            else if (cur > 0 && cur < Difficulty - 1)
+            {
+                if (tileList[cur - 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + Difficulty - 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + Difficulty].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + Difficulty + 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+
+                if (markedAmount != tile.AroundCount)
+                    return;
+
+                if (tileList[cur - 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - 1]);
+                if (tileList[cur + 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + 1]);
+                if (tileList[cur + Difficulty - 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + Difficulty - 1]);
+                if (tileList[cur + Difficulty].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + Difficulty]);
+                if (tileList[cur + Difficulty + 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + Difficulty + 1]);
+            }
+
+            else if (cur == Difficulty - 1)
+            {
+                if (tileList[cur - 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + Difficulty - 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + Difficulty].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+
+                if (markedAmount != tile.AroundCount)
+                    return;
+
+                if (tileList[cur - 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - 1]);
+                if (tileList[cur + Difficulty - 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + Difficulty - 1]);
+                if (tileList[cur + Difficulty].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + Difficulty]);
+            }
+
+            else if (cur % Difficulty == 0 && cur != Difficulty * (rows - 1))
+            {
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur - Difficulty + 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + Difficulty].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + Difficulty + 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+
+                if (markedAmount != tile.AroundCount)
+                    return;
+
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - Difficulty]);
+                if (tileList[cur - Difficulty + 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - Difficulty + 1]);
+                if (tileList[cur + 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + 1]);
+                if (tileList[cur + Difficulty].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + Difficulty]);
+                if (tileList[cur + Difficulty + 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + Difficulty + 1]);
+            }
+
+            else if ((cur + 1) % Difficulty == 0 && cur != Difficulty * rows - 1)
+            {
+                if (tileList[cur - Difficulty - 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur - 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + Difficulty - 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + Difficulty].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+
+                if (markedAmount != tile.AroundCount)
+                    return;
+
+                if (tileList[cur - Difficulty - 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - Difficulty - 1]);
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - Difficulty]);
+                if (tileList[cur - 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - 1]);
+                if (tileList[cur + Difficulty - 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + Difficulty - 1]);
+                if (tileList[cur + Difficulty].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + Difficulty]);
+            }
+
+            else if (cur == Difficulty * (rows - 1))
+            {
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur - Difficulty + 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+
+                if (markedAmount != tile.AroundCount)
+                    return;
+
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - Difficulty]);
+                if (tileList[cur - Difficulty + 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - Difficulty + 1]);
+                if (tileList[cur + 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + 1]);
+            }
+
+            else if (cur > Difficulty * (rows - 1) && cur < Difficulty * rows - 1)
+            {
+                if (tileList[cur - Difficulty - 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur - Difficulty + 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur - 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+
+                if (markedAmount != tile.AroundCount)
+                    return;
+
+                if (tileList[cur - Difficulty - 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - Difficulty - 1]);
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - Difficulty]);
+                if (tileList[cur - Difficulty + 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - Difficulty + 1]);
+                if (tileList[cur - 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur  - 1]);
+                if (tileList[cur + 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + 1]);
+            }
+
+            else if (cur == Difficulty * rows - 1)
+            {
+                if (tileList[cur - Difficulty - 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur - 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+
+                if (markedAmount != tile.AroundCount)
+                    return;
+
+                if (tileList[cur - Difficulty - 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - Difficulty - 1]);
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - Difficulty]);
+                if (tileList[cur - 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - 1]);
+            }
+
+            else
+            {
+                if (tileList[cur - Difficulty - 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur - Difficulty + 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur - 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + Difficulty - 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + Difficulty].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+                if (tileList[cur + Difficulty + 1].tileStatus == TileStatus.Marked)
+                    markedAmount++;
+
+                if (markedAmount != tile.AroundCount)
+                    return;
+
+                if (tileList[cur - Difficulty - 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - Difficulty - 1]); 
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - Difficulty]);
+                if (tileList[cur - Difficulty + 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - Difficulty + 1]); 
+                if (tileList[cur - 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur - 1]); 
+                if (tileList[cur + 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + 1]); 
+                if (tileList[cur + Difficulty - 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + Difficulty - 1]); 
+                if (tileList[cur + Difficulty].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + Difficulty]); 
+                if (tileList[cur + Difficulty + 1].tileStatus == TileStatus.Closed)
+                    list.Add(tileList[cur + Difficulty + 1]);
+            }
+
+            foreach (var item in list)
+            {
+                item.tileStatus = TileStatus.Open;
+                item.TileUpdate();
+                if (item.Planted)
+                    DisplayLose();
+            }
+        }
+
         // Генерация игрового поля
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
@@ -337,6 +591,26 @@ namespace kursach
             FillField(tileList, Difficulty);
             SetAroundCounts(tileList, Difficulty);
             MineLabel.Content = MineAmount.ToString();
+        }
+
+        public void CheckWin(object sender, EventArgs e)
+        {
+            int rows = Difficulty == 20 ? 12 : Difficulty;
+            for (int i = 0; i < Difficulty * rows - 1; i++)
+                if (tileList[i].tileStatus != TileStatus.Open && !tileList[i].Planted)
+                    return;
+
+            DisplayWin();
+        }
+
+        private void DisplayWin()
+        {
+            MessageBox.Show("Изи победа");
+        }
+
+        public void DisplayLose()
+        {
+            MessageBox.Show("Лошара");
         }
 
         // Обновление значения мин

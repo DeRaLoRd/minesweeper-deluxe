@@ -8,7 +8,6 @@
       d:DesignHeight="600" d:DesignWidth="800"
       Title="GamePage" Loaded="Page_Loaded">
 
-    
 
     <Grid Background="#202020">
         <Grid.RowDefinitions>
@@ -83,7 +82,7 @@
                    HorizontalAlignment="Center" VerticalAlignment="Center">
         </WrapPanel>
 
-        <Button Grid.Row="5" Grid.Column="1"
+        <Button Style="{DynamicResource SuperPuperStyle}" Grid.Row="5" Grid.Column="1"
                 IsCancel="True" Click="Back_Button_Click"
                 Background="#101010" BorderBrush="#101010">
             <Label 
