@@ -19,3 +19,5 @@ C:\Users\User\Desktop\Учеба\2 курс\ИНФ. ТЕХ. И ПРОГРАММ�
 C:\Users\User\Desktop\Учеба\2 курс\ИНФ. ТЕХ. И ПРОГРАММИРОВАНИЕ\2 курс\C#\Game\kursach\obj\Debug\kursach.pdb
 C:\Users\User\Desktop\Учеба\2 курс\ИНФ. ТЕХ. И ПРОГРАММИРОВАНИЕ\2 курс\C#\Game\kursach\bin\Debug\kursach.pdb
 C:\Users\User\Desktop\Учеба\2 курс\ИНФ. ТЕХ. И ПРОГРАММИРОВАНИЕ\2 курс\C#\Game\kursach\obj\Debug\kursach.csproj.AssemblyReference.cache
+C:\Users\User\Desktop\Учеба\2 курс\ИНФ. ТЕХ. И ПРОГРАММИРОВАНИЕ\2 курс\C#\Game\kursach\obj\Debug\WinPage.g.cs
+C:\Users\User\Desktop\Учеба\2 курс\ИНФ. ТЕХ. И ПРОГРАММИРОВАНИЕ\2 курс\C#\Game\kursach\obj\Debug\WinPage.baml

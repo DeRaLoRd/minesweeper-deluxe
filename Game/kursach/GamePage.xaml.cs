@@ -19,13 +19,14 @@ namespace kursach
 
     struct TimePassed
     {
+        public int minutes;
+        public int seconds;
+
         public TimePassed(int min, int sec)
         {
             minutes = min;
             seconds = sec;
         }
-        public int minutes;
-        public int seconds;
         public override string ToString()
         {
             return (minutes >= 10 ? "" : "0") + $"{minutes}:" + (seconds >= 10 ? "" : "0") + $"{seconds}";
@@ -37,13 +38,12 @@ namespace kursach
     /// </summary>
     public partial class GamePage : Page
     {
-        MenuPage menuPage = null;            // Ссылка на страницу с главным меню для навигации назад
-        public int Difficulty { get; set; }  // Сложность переданная из MenuPage
-        public int MineAmount { get; set; }  // Количество непомеченных мин на поле
-        private int mineOverallAmount = 0;      // Количество мин в принципе
-        TimePassed timePassed;               // Время решения уровня
-        DispatcherTimer timer = null;       // Для реализации секундомера
-        internal List<Tile> tileList = null;  // Список мин
+        MenuPage menuPage = null;               // Ссылка на страницу с главным меню для навигации назад
+        public int Difficulty { get; set; }     // Сложность переданная из MenuPage
+        public int MineAmount { get; set; }     // Количество непомеченных мин на поле
+        TimePassed timePassed;                  // Время решения уровня
+        DispatcherTimer timer = null;           // Для реализации секундомера
+        internal List<Tile> tileList = null;    // Список мин
 
         public GamePage(MenuPage menu, int diff)
         {
@@ -105,10 +105,18 @@ namespace kursach
                     difficulty == 20 && chance <= 0.25)
                 {
                     MineAmount++;
-                    mineOverallAmount++;
                     item.Planted = true;
                     item.TileUpdate();
                 }
+                else
+                    item.TileButton.Click += CheckWin;
+            }
+
+            if (difficulty == 9 && MineAmount < 7 ||
+                difficulty == 12 && MineAmount < 15 ||
+                difficulty == 20 && MineAmount < 40)
+            {
+                FillField(field, difficulty);
             }
         }
 
@@ -203,7 +211,7 @@ namespace kursach
             OpenAround(tile, i);
         }
 
-        internal void OpenAround(Tile tile, int cur/*, int prev*/)
+        internal void OpenAround(Tile tile, int cur)
         {
             int rows = Difficulty == 20 ? 12 : Difficulty;
 
@@ -211,7 +219,7 @@ namespace kursach
             tile.TileUpdate();
 
             // Базис рекурсии
-            if (tile.AroundCount != 0 || tile.Planted) return;
+            if (tile.AroundCount != 0) return;
 
             if (cur == 0)
             {
@@ -222,7 +230,7 @@ namespace kursach
                 if (tileList[Difficulty + 1].tileStatus == TileStatus.Closed)
                     OpenAround(tileList[Difficulty + 1], Difficulty + 1);
             }
-            else if (cur < Difficulty - 1)
+            else if (cur > 0 && cur < Difficulty - 1)
             {
                 if (tileList[cur - 1].tileStatus == TileStatus.Closed)
                     OpenAround(tileList[cur - 1], cur - 1);
@@ -277,7 +285,7 @@ namespace kursach
                 if (tileList[cur - Difficulty + 1].tileStatus == TileStatus.Closed)
                     OpenAround(tileList[cur - Difficulty + 1], cur - Difficulty + 1);
                 if (tileList[cur + 1].tileStatus == TileStatus.Closed)
-                    OpenAround(tileList[cur+ 1], Difficulty + 1);
+                    OpenAround(tileList[cur + 1], cur + 1);
             }
             else if (cur > Difficulty * (rows - 1) && cur < Difficulty * rows - 1)
             {
@@ -294,10 +302,10 @@ namespace kursach
             }
             else if (cur == Difficulty * rows - 1)
             {
-                if (tileList[cur - Difficulty].tileStatus == TileStatus.Closed)
-                    OpenAround(tileList[cur - Difficulty], cur - Difficulty);
                 if (tileList[cur - Difficulty - 1].tileStatus == TileStatus.Closed)
                     OpenAround(tileList[cur - Difficulty - 1], cur - Difficulty - 1);
+                if (tileList[cur - Difficulty].tileStatus == TileStatus.Closed)
+                    OpenAround(tileList[cur - Difficulty], cur - Difficulty);
                 if (tileList[cur - 1].tileStatus == TileStatus.Closed)
                     OpenAround(tileList[cur - 1], cur - 1);
             }
@@ -571,6 +579,8 @@ namespace kursach
                 item.TileUpdate();
                 if (item.Planted)
                     DisplayLose();
+                if (item.AroundCount == 0)
+                    OpenAround(item);
             }
         }
 
@@ -590,7 +600,7 @@ namespace kursach
 
             FillField(tileList, Difficulty);
             SetAroundCounts(tileList, Difficulty);
-            MineLabel.Content = MineAmount.ToString();
+            MineLabel.Content = MineAmount;
         }
 
         public void CheckWin(object sender, EventArgs e)
@@ -605,12 +615,21 @@ namespace kursach
 
         private void DisplayWin()
         {
-            MessageBox.Show("Изи победа");
+            timer.Stop();
+            NavigationService.Navigate(new WinPage(menuPage));
         }
 
         public void DisplayLose()
         {
-            MessageBox.Show("Лошара");
+            timer.Stop();
+            foreach (var item in tileList)
+            {
+                item.tileStatus = TileStatus.Open;
+                item.TileUpdate();
+            }
+
+            MessageBox.Show("Сапёр ошибается единожды.");
+            NavigationService.Navigate(menuPage);
         }
 
         // Обновление значения мин

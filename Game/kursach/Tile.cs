@@ -42,7 +42,6 @@ namespace kursach
             this.gamePage = gamePage;
             TileButton = new Button();
             TileButton.Click += TileOpen;
-            TileButton.Click += gamePage.CheckWin;
             TileButton.MouseRightButtonDown += TileMarked;
             tileStatus = TileStatus.Closed;                 // Изначальное состояние плиток
             AroundCount = 0;
