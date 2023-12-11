@@ -103,8 +103,8 @@ namespace kursach
                     item.TileButton.Click += CheckWin;
             }
 
-            if (difficulty == 9 && MineAmount < 7 ||
-                difficulty == 12 && MineAmount < 10 ||
+            if (difficulty == 9 && MineAmount < 7 || difficulty == 9 && MineAmount > 15 ||
+                difficulty == 12 && MineAmount < 10 || difficulty == 12 && MineAmount > 20 ||
                 difficulty == 20 && MineAmount < 30)
             {
                 MineAmount = 0;
