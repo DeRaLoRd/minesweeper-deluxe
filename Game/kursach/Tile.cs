@@ -65,9 +65,9 @@ namespace kursach
             switch (status)
             {
                 case TileStatus.Closed:
-                    buttonBackground.R = 78;
-                    buttonBackground.G = 5;
-                    buttonBackground.B = 173;
+                    buttonBackground.R = 0;
+                    buttonBackground.G = 191;
+                    buttonBackground.B = 255;
                     break;
 
                 case TileStatus.Marked:

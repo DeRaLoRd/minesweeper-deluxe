@@ -29,7 +29,7 @@
         <TextBlock Grid.Row="0" Grid.Column="1"
                    FontFamily="Courier New Bold"
                    FontSize="50"
-                   Foreground="#4e05ad"
+                   Foreground="#00bfff"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center">
             Мины
@@ -38,7 +38,7 @@
         <TextBlock Grid.Row="0" Grid.Column="3"
                    FontFamily="Courier New Bold"
                    FontSize="50"
-                   Foreground="#4e05ad"
+                   Foreground="#00bfff"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center">
             Время
@@ -52,7 +52,7 @@
                    VerticalContentAlignment="Center"
                    FontFamily="Courier New Bold"
                    FontSize="38"
-                   Foreground="#4e05ad">
+                   Foreground="#00bfff">
 
             </Label>
         </Border>
@@ -65,7 +65,7 @@
                    VerticalContentAlignment="Center"
                    FontFamily="Courier New Bold"
                    FontSize="38"
-                   Foreground="#4e05ad">
+                   Foreground="#00bfff">
                 
             </Label>
         </Border>
@@ -88,7 +88,7 @@
             <Label 
                    FontFamily="Courier New Bold"
                    FontSize="27"
-                   Foreground="#4e05ad"
+                   Foreground="#00bfff"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center">
                 ESC - Выход
@@ -99,7 +99,7 @@
         <TextBlock Grid.Row="4" Grid.Column="3" Grid.ColumnSpan="2"
                    FontFamily="Courier New Bold"
                    FontSize="28"
-                   Foreground="#4e05ad"
+                   Foreground="#00bfff"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Bottom">
             ЛКМ - Открыть
@@ -108,7 +108,7 @@
         <TextBlock Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="2"
                    FontFamily="Courier New Bold"
                    FontSize="28"
-                   Foreground="#4e05ad"
+                   Foreground="#00bfff"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Center">
             ПКМ - Флажок

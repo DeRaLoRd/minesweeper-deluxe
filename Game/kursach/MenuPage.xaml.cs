@@ -15,19 +15,32 @@ using System.Windows.Shapes;
 
 namespace kursach
 {
+    public struct Score
+    {
+        public int difficulty;
+        public TimePassed time;
+
+        public Score(int diff, TimePassed time)
+        {
+            difficulty = diff;
+            this.time = time;
+        }
+    }
+
     /// <summary>
     /// Страница с меню
     /// </summary>
     public partial class MenuPage : Page
     {
-        // Ссылка на главное окно (для вызова у него метода закрытия) 
-        private MainWindow mainWindow = null;
         private DifficultyWindow difficultyWindow = null;
+        public List<Score> scoreList;
 
         public MenuPage(MainWindow mainWin)
         {
             InitializeComponent();
-            mainWindow = mainWin;
+
+            scoreList = new List<Score>();
+            ScoreHandler.ReadAll(scoreList);
         }
 
         private void Play_Button_Click(object sender, RoutedEventArgs e)
@@ -41,11 +54,12 @@ namespace kursach
 
         private void Scores_Button_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("В разработке");
+            NavigationService.Navigate(new RecordsPage(this, scoreList));
         }
 
         private void Exit_Button_Click(object sender, RoutedEventArgs e)
         {
+            ScoreHandler.WriteAll(scoreList);
             Application.Current.Shutdown();
         }
     }

@@ -22,11 +22,11 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <SolidColorBrush x:Key="Button.Static.Background" Color="#4e05ad"/>
+        <SolidColorBrush x:Key="Button.Static.Background" Color="#00bfff"/>
         <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070"/>
-        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#5900ba"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#33ccff"/>
         <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
-        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#6b2fbf"/>
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#66d9ff"/>
         <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
         <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
         <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
@@ -95,7 +95,7 @@
                 Background="#101010">
             <TextBlock Grid.Row="0"
                    FontFamily="Courier New Bold"
-                   Foreground="#4e05ad"
+                   Foreground="#00bfff"
                    FontSize="26"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center">
@@ -111,19 +111,19 @@
                 Background="#101010">
             <StackPanel Margin="5 10">
                 <RadioButton FontFamily="Courier New Bold"
-                             Foreground="#4e05ad"
+                             Foreground="#00bfff"
                              FontSize="20"
                              Content="Новичок"
                              Checked="Difficulty_Check"/>
 
                 <RadioButton FontFamily="Courier New Bold"
-                             Foreground="#4e05ad"
+                             Foreground="#00bfff"
                              FontSize="20"
                              Content="Среднячок"
                              Checked="Difficulty_Check"/>
 
                 <RadioButton FontFamily="Courier New Bold"
-                             Foreground="#4e05ad"
+                             Foreground="#00bfff"
                              FontSize="20"
                              Content="Профемссионал"
                              Checked="Difficulty_Check"/>

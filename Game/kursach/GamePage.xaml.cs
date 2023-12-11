@@ -1,23 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace kursach
 {
 
-    struct TimePassed
+    public struct TimePassed
     {
         public int minutes;
         public int seconds;
@@ -101,8 +92,8 @@ namespace kursach
             {
                 chance = rng.NextDouble();
                 if (difficulty == 9 && chance <= 0.1 ||
-                    difficulty == 12 && chance <= 0.2 ||
-                    difficulty == 20 && chance <= 0.25)
+                    difficulty == 12 && chance <= 0.15 ||
+                    difficulty == 20 && chance <= 0.2)
                 {
                     MineAmount++;
                     item.Planted = true;
@@ -113,9 +104,10 @@ namespace kursach
             }
 
             if (difficulty == 9 && MineAmount < 7 ||
-                difficulty == 12 && MineAmount < 15 ||
-                difficulty == 20 && MineAmount < 40)
+                difficulty == 12 && MineAmount < 10 ||
+                difficulty == 20 && MineAmount < 30)
             {
+                MineAmount = 0;
                 FillField(field, difficulty);
             }
         }
@@ -508,7 +500,7 @@ namespace kursach
                 if (tileList[cur - Difficulty + 1].tileStatus == TileStatus.Closed)
                     list.Add(tileList[cur - Difficulty + 1]);
                 if (tileList[cur - 1].tileStatus == TileStatus.Closed)
-                    list.Add(tileList[cur  - 1]);
+                    list.Add(tileList[cur - 1]);
                 if (tileList[cur + 1].tileStatus == TileStatus.Closed)
                     list.Add(tileList[cur + 1]);
             }
@@ -556,19 +548,19 @@ namespace kursach
                     return;
 
                 if (tileList[cur - Difficulty - 1].tileStatus == TileStatus.Closed)
-                    list.Add(tileList[cur - Difficulty - 1]); 
+                    list.Add(tileList[cur - Difficulty - 1]);
                 if (tileList[cur - Difficulty].tileStatus == TileStatus.Closed)
                     list.Add(tileList[cur - Difficulty]);
                 if (tileList[cur - Difficulty + 1].tileStatus == TileStatus.Closed)
-                    list.Add(tileList[cur - Difficulty + 1]); 
+                    list.Add(tileList[cur - Difficulty + 1]);
                 if (tileList[cur - 1].tileStatus == TileStatus.Closed)
-                    list.Add(tileList[cur - 1]); 
+                    list.Add(tileList[cur - 1]);
                 if (tileList[cur + 1].tileStatus == TileStatus.Closed)
-                    list.Add(tileList[cur + 1]); 
+                    list.Add(tileList[cur + 1]);
                 if (tileList[cur + Difficulty - 1].tileStatus == TileStatus.Closed)
-                    list.Add(tileList[cur + Difficulty - 1]); 
+                    list.Add(tileList[cur + Difficulty - 1]);
                 if (tileList[cur + Difficulty].tileStatus == TileStatus.Closed)
-                    list.Add(tileList[cur + Difficulty]); 
+                    list.Add(tileList[cur + Difficulty]);
                 if (tileList[cur + Difficulty + 1].tileStatus == TileStatus.Closed)
                     list.Add(tileList[cur + Difficulty + 1]);
             }
@@ -616,6 +608,9 @@ namespace kursach
         private void DisplayWin()
         {
             timer.Stop();
+            Score temp = new Score { difficulty = Difficulty, time = timePassed };
+            menuPage.scoreList.Insert(0, temp);
+            if (menuPage.scoreList.Count > 5) menuPage.scoreList.RemoveAt(5);
             NavigationService.Navigate(new WinPage(menuPage));
         }
 
@@ -642,7 +637,7 @@ namespace kursach
         private void Back_Button_Click(object sender, RoutedEventArgs e)
         {
             timer.Stop();
-            MessageBox.Show("Поле было открыто " + timePassed.ToString() + " <- вот столько времени");
+            MessageBox.Show("Ну беги, беги...");
             NavigationService.Navigate(menuPage);
         }
     }
